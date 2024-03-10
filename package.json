@@ -1,0 +1,29 @@
+{
+  "name": "market-bot",
+  "version": "1.0.0",
+  "main": "build/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "node build/index.js",
+    "dev": "nodemon src/index.ts"
+  },
+  "author": "SmartMainnet",
+  "license": "MIT",
+  "dependencies": {
+    "@grammyjs/conversations": "^1.2.0",
+    "@grammyjs/i18n": "^1.0.1",
+    "@grammyjs/ratelimiter": "^1.2.0",
+    "@grammyjs/storage-mongodb": "^2.4.2",
+    "axios": "^1.6.7",
+    "dotenv": "^16.4.1",
+    "grammy": "^1.20.3",
+    "mongoose": "^8.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.17",
+    "nodemon": "^3.0.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}
