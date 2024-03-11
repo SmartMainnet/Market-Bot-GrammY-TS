@@ -1,7 +1,7 @@
 import 'dotenv/config'
 import mongoose from 'mongoose'
-import { MongoDBAdapter, ISession } from '@grammyjs/storage-mongodb'
 import { Bot, session } from 'grammy'
+import { MongoDBAdapter, ISession } from '@grammyjs/storage-mongodb'
 import { conversations, createConversation } from '@grammyjs/conversations'
 
 import { connectMongoose } from './database/connect/index.js'
@@ -12,7 +12,7 @@ import {
   newproductCommand,
   startCommand,
 } from './handlers/commands/index.js'
-import { buyCallback } from './handlers/callbacks/index.js'
+import { buyCallback, choseWalletCallback } from './handlers/callbacks/index.js'
 import { ContextType } from './types/index.js'
 
 await connectMongoose()
@@ -55,6 +55,7 @@ bot.hears(/./, async (ctx: ContextType) => {
 
 // callbacks
 bot.callbackQuery(/^P[0-9]+$/, buyCallback)
+bot.callbackQuery(/./, choseWalletCallback)
 
 // start bot
 bot.start({

@@ -1,5 +1,5 @@
-import { InputFile } from 'grammy'
 import QRCode from 'qrcode'
+import { InputFile } from 'grammy'
 
 import { getConnector, getWallets } from '../../ton-connect/index.js'
 import { ContextType } from '../../types/index.js'
@@ -17,12 +17,7 @@ export const connectCommand = async (ctx: ContextType) => {
       }
     })
 
-    const tonkeeper = wallets.find(wallet => wallet.appName === 'tonkeeper')!
-
-    const link = connector.connect({
-      bridgeUrl: tonkeeper.bridgeUrl,
-      universalLink: tonkeeper.universalLink,
-    })
+    const link = connector.connect(wallets)
     const QRCodeBuffer = await QRCode.toBuffer(link)
     const image = new InputFile(QRCodeBuffer)
 
