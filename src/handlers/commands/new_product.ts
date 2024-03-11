@@ -1,6 +1,6 @@
 import { ContextType } from '../../types/index.js'
 
-export const newproductCommand = async (ctx: ContextType) => {
+export const newProductCommand = async (ctx: ContextType) => {
   try {
     await ctx.conversation.enter('newProduct')
   } catch (e) {

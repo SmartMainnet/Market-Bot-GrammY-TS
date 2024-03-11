@@ -11,6 +11,7 @@ import { newProduct } from './handlers/scenes/index.js'
 import {
   connectCommand,
   newproductCommand,
+  sendTxCommand,
   startCommand,
 } from './handlers/commands/index.js'
 import { buyCallback, choseWalletCallback } from './handlers/callbacks/index.js'
@@ -26,7 +27,8 @@ const bot = new Bot<ContextType>(BOT_TOKEN!)
 await bot.api.setMyCommands([
   { command: 'start', description: 'Restart bot' },
   { command: 'connect', description: 'Connect wallet' },
-  { command: 'newproduct', description: 'Create new product' },
+  { command: 'send_tx', description: 'Send transaction' },
+  { command: 'new_product', description: 'Create new product' },
 ])
 
 // plugins
@@ -46,7 +48,8 @@ bot.use(createConversation(newProduct))
 // commands
 bot.command('start', startCommand)
 bot.command('connect', deleteCommandMiddleware, connectCommand)
-bot.command('newproduct', newproductCommand)
+bot.command('send_tx', sendTxCommand)
+bot.command('new_product', newproductCommand)
 
 // messages
 bot.hears(/./, async (ctx: ContextType) => {
