@@ -10,7 +10,7 @@ import { deleteCommandMiddleware } from './middlewares/utils/index.js'
 import { newProduct } from './handlers/scenes/index.js'
 import {
   connectCommand,
-  newproductCommand,
+  newProductCommand,
   sendTxCommand,
   startCommand,
 } from './handlers/commands/index.js'
@@ -49,7 +49,7 @@ bot.use(createConversation(newProduct))
 bot.command('start', startCommand)
 bot.command('connect', deleteCommandMiddleware, connectCommand)
 bot.command('send_tx', sendTxCommand)
-bot.command('new_product', newproductCommand)
+bot.command('new_product', newProductCommand)
 
 // messages
 bot.hears(/./, async (ctx: ContextType) => {
