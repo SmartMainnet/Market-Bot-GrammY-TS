@@ -1,4 +1,6 @@
 export * from './start.js'
 export * from './connect.js'
+export * from './disconnect.js'
+export * from './showMyWallet.js'
 export * from './send_tx.js'
 export * from './new_product.js'

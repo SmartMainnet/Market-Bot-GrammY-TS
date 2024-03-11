@@ -8,8 +8,8 @@ export const sendTxCommand = async (ctx: ContextType) => {
     const chatId = ctx.chat?.id!
 
     const connector = getConnector(chatId)
-
     await connector.restoreConnection()
+
     if (!connector.connected) {
       await ctx.reply('Connect wallet to send transaction')
       return
@@ -46,6 +46,7 @@ export const sendTxCommand = async (ctx: ContextType) => {
 
     let deeplink = ''
     const walletInfo = await getWalletInfo(connector.wallet!.device.appName)
+
     if (walletInfo) {
       deeplink = (walletInfo as any).universalLink
     }

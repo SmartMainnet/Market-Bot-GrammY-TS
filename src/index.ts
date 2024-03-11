@@ -10,8 +10,10 @@ import { deleteCommandMiddleware } from './middlewares/utils/index.js'
 import { newProduct } from './handlers/scenes/index.js'
 import {
   connectCommand,
+  disconnectCommand,
   newProductCommand,
   sendTxCommand,
+  showMyWalletCommand,
   startCommand,
 } from './handlers/commands/index.js'
 import { buyCallback, choseWalletCallback } from './handlers/callbacks/index.js'
@@ -27,6 +29,8 @@ const bot = new Bot<ContextType>(BOT_TOKEN!)
 await bot.api.setMyCommands([
   { command: 'start', description: 'Restart bot' },
   { command: 'connect', description: 'Connect wallet' },
+  { command: 'disconnect', description: 'Disconnect wallet' },
+  { command: 'my_wallet', description: 'Show my wallet' },
   { command: 'send_tx', description: 'Send transaction' },
   { command: 'new_product', description: 'Create new product' },
 ])
@@ -49,6 +53,8 @@ bot.use(createConversation(newProduct))
 bot.command('start', startCommand)
 bot.command('connect', deleteCommandMiddleware, connectCommand)
 bot.command('send_tx', sendTxCommand)
+bot.command('disconnect', disconnectCommand)
+bot.command('my_wallet', showMyWalletCommand)
 bot.command('new_product', newProductCommand)
 
 // messages
