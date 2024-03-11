@@ -6,6 +6,7 @@ import { conversations, createConversation } from '@grammyjs/conversations'
 
 import { connectMongoose } from './database/connect/index.js'
 import { i18nMiddleware, limitMiddleware } from './middlewares/plugins/index.js'
+import { deleteCommandMiddleware } from './middlewares/utils/index.js'
 import { newProduct } from './handlers/scenes/index.js'
 import {
   connectCommand,
@@ -44,7 +45,7 @@ bot.use(createConversation(newProduct))
 
 // commands
 bot.command('start', startCommand)
-bot.command('connect', connectCommand)
+bot.command('connect', deleteCommandMiddleware, connectCommand)
 bot.command('newproduct', newproductCommand)
 
 // messages
