@@ -1,3 +1,3 @@
-export * from './countersModel.js'
-export * from './usersModel.js'
-export * from './productsModel.js'
+export * from './counters.js'
+export * from './users.js'
+export * from './products.js'

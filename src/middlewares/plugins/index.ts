@@ -1,2 +1,2 @@
-export * from './i18nMiddleware.js'
-export * from './limitMiddleware.js'
+export * from './i18n.js'
+export * from './limit.js'

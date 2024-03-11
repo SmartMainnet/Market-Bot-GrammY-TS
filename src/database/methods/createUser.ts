@@ -14,7 +14,10 @@ export const createUser = async (user: User) => {
         last_name: user.last_name,
       })
     }
+
+    return null
   } catch (e) {
     console.log(e)
+    return null
   }
 }

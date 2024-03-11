@@ -12,6 +12,7 @@ export const newProduct = async (user: User, product: ISceneProduct) => {
     })
   } catch (e) {
     console.log(e)
+    return null
   }
 }
 
@@ -20,5 +21,6 @@ export const getProduct = async (id: number) => {
     return await ProductsModel.findOne({ id })
   } catch (e) {
     console.log(e)
+    return null
   }
 }
