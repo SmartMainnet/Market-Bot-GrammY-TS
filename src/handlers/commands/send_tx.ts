@@ -1,6 +1,7 @@
 import { UserRejectsError } from '@tonconnect/sdk'
 
 import { getConnector, getWalletInfo } from '../../ton-connect/index.js'
+import { pTimeout, pTimeoutException } from '../../utils/index.js'
 import { ContextType } from '../../types/index.js'
 
 export const sendTxCommand = async (ctx: ContextType) => {
@@ -15,9 +16,11 @@ export const sendTxCommand = async (ctx: ContextType) => {
       return
     }
 
-    connector
-      .sendTransaction({
-        validUntil: Math.round(Date.now() / 1000) + 600, // timeout is SECONDS
+    pTimeout(
+      connector.sendTransaction({
+        validUntil: Math.round(
+          (Date.now() + Number(process.env.DELETE_SEND_TX_MESSAGE_TIMEOUT_MS)) / 1000
+        ),
         messages: [
           {
             amount: '30000000',
@@ -30,11 +33,18 @@ export const sendTxCommand = async (ctx: ContextType) => {
               '0:7eb4b8b4c7943d684c090473b65fee67565285861f4a30959523cec359f9504b',
           },
         ],
-      })
+      }),
+      Number(process.env.DELETE_SEND_TX_MESSAGE_TIMEOUT_MS)
+    )
       .then(() => {
         ctx.reply(`Transaction sent successfully`)
       })
       .catch(e => {
+        if (e === pTimeoutException) {
+          ctx.reply(`Transaction was not confirmed`)
+          return
+        }
+
         if (e instanceof UserRejectsError) {
           ctx.reply(`You rejected the transaction`)
           return
