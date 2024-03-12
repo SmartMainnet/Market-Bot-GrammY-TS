@@ -1,7 +1,7 @@
 import QRCode from 'qrcode'
 import { InputFile, InputMediaBuilder } from 'grammy'
 
-import { getConnector, getWalletInfo, getWallets } from './index.js'
+import { getConnector, getWallets } from './index.js'
 import { ContextType } from '../types/index.js'
 
 export const walletMenuCallbacks = {
@@ -44,13 +44,8 @@ async function onWalletClick(ctx: ContextType, data: string): Promise<void> {
   const chatId = query.message!.chat.id
   const connector = getConnector(chatId)
 
-  connector.onStatusChange((wallet: any) => {
-    if (wallet) {
-      ctx.reply(`${wallet.device.appName} wallet connected!`)
-    }
-  })
-
-  const selectedWallet = await getWalletInfo(data)
+  const wallets = await getWallets()
+  const selectedWallet = wallets.find(wallet => wallet.name === data)
 
   if (!selectedWallet) {
     return
@@ -87,15 +82,7 @@ export async function onOpenUniversalQRClick(
 ): Promise<void> {
   const chatId = ctx.chat?.id!
   const wallets = await getWallets()
-
   const connector = getConnector(chatId)
-
-  connector.onStatusChange(wallet => {
-    if (wallet) {
-      ctx.reply(`${wallet.device.appName} wallet connected!`)
-    }
-  })
-
   const link = connector.connect(wallets)
 
   await editQR(ctx, link)
