@@ -1,7 +1,11 @@
-import { UserRejectsError } from '@tonconnect/sdk'
+import { UserRejectsError, isTelegramUrl } from '@tonconnect/sdk'
 
 import { getConnector, getWalletInfo } from '../../ton-connect/index.js'
-import { pTimeout, pTimeoutException } from '../../utils/index.js'
+import {
+  addTGReturnStrategy,
+  pTimeout,
+  pTimeoutException,
+} from '../../utils/index.js'
 import { ContextType } from '../../types/index.js'
 
 export const sendTxCommand = async (ctx: ContextType) => {
@@ -61,6 +65,12 @@ export const sendTxCommand = async (ctx: ContextType) => {
       deeplink = (walletInfo as any).universalLink
     }
 
+    if (isTelegramUrl(deeplink)) {
+      const url = new URL(deeplink)
+      url.searchParams.append('startattach', 'tonconnect')
+      deeplink = addTGReturnStrategy(url.toString(), process.env.BOT_LINK!)
+    }
+
     await ctx.reply(
       `Open ${
         walletInfo?.name || connector.wallet!.device.appName
@@ -70,7 +80,7 @@ export const sendTxCommand = async (ctx: ContextType) => {
           inline_keyboard: [
             [
               {
-                text: 'Open Wallet',
+                text: `Open ${walletInfo?.name || connector.wallet!.device.appName}`,
                 url: deeplink,
               },
             ],

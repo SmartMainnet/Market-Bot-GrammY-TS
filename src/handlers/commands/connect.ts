@@ -8,6 +8,7 @@ import {
 import { InputFile } from 'grammy'
 
 import { getConnector, getWalletInfo, getWallets } from '../../ton-connect/index.js'
+import { buildUniversalKeyboard } from '../../utils/index.js'
 import { ContextType } from '../../types/index.js'
 
 let newConnectRequestListenersMap = new Map<number, () => void>()
@@ -57,23 +58,11 @@ export const connectCommand = async (ctx: ContextType) => {
     const link = connector.connect(wallets)
     const QRCodeBuffer = await QRCode.toBuffer(link)
     const image = new InputFile(QRCodeBuffer)
+    const keyboard = await buildUniversalKeyboard(link, wallets)
 
     const botMessage = await ctx.replyWithPhoto(image, {
       reply_markup: {
-        inline_keyboard: [
-          [
-            {
-              text: 'Choose a Wallet',
-              callback_data: JSON.stringify({ method: 'chose_wallet' }),
-            },
-            {
-              text: 'Open Link',
-              url: `https://ton-connect.github.io/open-tc?connect=${encodeURIComponent(
-                link
-              )}`,
-            },
-          ],
-        ],
+        inline_keyboard: [keyboard],
       },
     })
 

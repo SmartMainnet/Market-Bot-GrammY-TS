@@ -1,8 +1,10 @@
 import QRCode from 'qrcode'
 import { InputFile, InputMediaBuilder } from 'grammy'
 
-import { getConnector, getWallets } from './index.js'
+import { getConnector, getWalletInfo, getWallets } from './index.js'
+import { addTGReturnStrategy, buildUniversalKeyboard } from '../utils/index.js'
 import { ContextType } from '../types/index.js'
+import { isTelegramUrl } from '@tonconnect/sdk'
 
 export const walletMenuCallbacks = {
   chose_wallet: onChooseWalletClick,
@@ -43,20 +45,24 @@ async function onWalletClick(ctx: ContextType, data: string): Promise<void> {
   const query = ctx.update.callback_query!
   const chatId = query.message!.chat.id
   const connector = getConnector(chatId)
-
-  const wallets = await getWallets()
-  const selectedWallet = wallets.find(wallet => wallet.name === data)
+  const selectedWallet = await getWalletInfo(data)
 
   if (!selectedWallet) {
     return
   }
 
-  const link = connector.connect({
+  let buttonLink = connector.connect({
     bridgeUrl: (selectedWallet as any).bridgeUrl,
     universalLink: (selectedWallet as any).universalLink,
   })
+  let qrLink = buttonLink
 
-  await editQR(ctx, link)
+  if (isTelegramUrl((selectedWallet as any).universalLink)) {
+    buttonLink = addTGReturnStrategy(buttonLink, process.env.BOT_LINK!)
+    qrLink = addTGReturnStrategy(qrLink, 'none')
+  }
+
+  await editQR(ctx, qrLink)
 
   await ctx.editMessageReplyMarkup({
     reply_markup: {
@@ -68,7 +74,7 @@ async function onWalletClick(ctx: ContextType, data: string): Promise<void> {
           },
           {
             text: `Open ${selectedWallet.name}`,
-            url: link,
+            url: buttonLink,
           },
         ],
       ],
@@ -87,22 +93,11 @@ export async function onOpenUniversalQRClick(
 
   await editQR(ctx, link)
 
+  const keyboard = await buildUniversalKeyboard(link, wallets)
+
   await ctx.editMessageReplyMarkup({
     reply_markup: {
-      inline_keyboard: [
-        [
-          {
-            text: 'Choose a Wallet',
-            callback_data: JSON.stringify({ method: 'chose_wallet' }),
-          },
-          {
-            text: 'Open Link',
-            url: `https://ton-connect.github.io/open-tc?connect=${encodeURIComponent(
-              link
-            )}`,
-          },
-        ],
-      ],
+      inline_keyboard: [keyboard],
     },
   })
 }
